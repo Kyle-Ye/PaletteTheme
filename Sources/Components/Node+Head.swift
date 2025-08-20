@@ -27,7 +27,7 @@ extension Node where Context == HTML.DocumentContext {
         for location: Location,
         on site: T,
         titleSeparator: String = " | ",
-        stylesheetPaths: [Path] = ["/styles.css"],
+        stylesheetPaths: [Path] = ["/styles.css", "/highlightjs-xcode.css"],
         rssFeedPath: Path? = .defaultForRSSFeed,
         rssFeedTitle: String? = nil,
         customNodes: [Node<HTML.HeadContext>] = []

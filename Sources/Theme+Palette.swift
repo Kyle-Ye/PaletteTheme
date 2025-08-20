@@ -12,7 +12,7 @@ public extension Theme where Site: PaletteWebsite {
     static var palette: Self {
         Theme(
             htmlFactory: PaletteThemeHTMLFactory(),
-            resourcePaths: ["Resources/styles.css"]
+            resourcePaths: ["Resources/styles.css", "Resources/highlightjs-xcode.css"]
         )
     }
 }
