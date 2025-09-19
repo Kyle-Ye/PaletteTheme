@@ -205,6 +205,46 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
             .lang(context.site.language),
             .head(for: index, on: context.site, customNodes: context.site.headCustomNodes + [
                 .script(.text("""
+                // UI Localization data
+                const uiStrings = {
+                    'en': {
+                        'Posts': 'Posts',
+                        'Archives': 'Archives',
+                        'Language': 'Language',
+                        'English': 'English',
+                        'About': 'About'
+                    },
+                    'zh': {
+                        'Posts': '文章',
+                        'Archives': '归档',
+                        'Language': '语言',
+                        'English': 'English',
+                        'About': '关于'
+                    }
+                };
+
+                // Function to translate UI elements (expose globally)
+                window.translateUIElements = function(lang) {
+                    const translations = uiStrings[lang] || uiStrings['en'];
+
+                    // Translate navigation links
+                    document.querySelectorAll('nav a').forEach(link => {
+                        const href = link.getAttribute('href');
+                        if (href === '/posts' && translations['Posts']) {
+                            link.textContent = translations['Posts'];
+                        } else if (href === '/archives' && translations['Archives']) {
+                            link.textContent = translations['Archives'];
+                        }
+                    });
+
+                    // Translate "About" section
+                    document.querySelectorAll('h2').forEach(heading => {
+                        if (heading.textContent.trim() === 'About' && translations['About']) {
+                            heading.textContent = translations['About'];
+                        }
+                    });
+                }
+
                 // Language detection for initial page load
                 function detectAndSetInitialLanguage() {
                     const stored = localStorage.getItem('preferredLanguage');
@@ -228,6 +268,10 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
                     if (!localStorage.getItem('preferredLanguage')) {
                         localStorage.setItem('preferredLanguage', defaultLang);
                     }
+
+                    // Translate UI elements based on detected language
+                    const uiLang = (defaultLang === 'zh_cn' || defaultLang === 'zh') ? 'zh' : 'en';
+                    window.translateUIElements(uiLang);
                 }
                 detectAndSetInitialLanguage();
 
@@ -291,6 +335,46 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
             .lang(context.site.language),
             .head(for: section, on: context.site, customNodes: context.site.headCustomNodes + [
                 .script(.text("""
+                // UI Localization data (same as homepage)
+                const uiStrings = {
+                    'en': {
+                        'Posts': 'Posts',
+                        'Archives': 'Archives',
+                        'Language': 'Language',
+                        'English': 'English',
+                        'About': 'About'
+                    },
+                    'zh': {
+                        'Posts': '文章',
+                        'Archives': '归档',
+                        'Language': '语言',
+                        'English': 'English',
+                        'About': '关于'
+                    }
+                };
+
+                // Function to translate UI elements (expose globally)
+                window.translateUIElements = function(lang) {
+                    const translations = uiStrings[lang] || uiStrings['en'];
+
+                    // Translate navigation links
+                    document.querySelectorAll('nav a').forEach(link => {
+                        const href = link.getAttribute('href');
+                        if (href === '/posts' && translations['Posts']) {
+                            link.textContent = translations['Posts'];
+                        } else if (href === '/archives' && translations['Archives']) {
+                            link.textContent = translations['Archives'];
+                        }
+                    });
+
+                    // Translate "About" section
+                    document.querySelectorAll('h2').forEach(heading => {
+                        if (heading.textContent.trim() === 'About' && translations['About']) {
+                            heading.textContent = translations['About'];
+                        }
+                    });
+                }
+
                 // Language detection for section pages
                 function detectAndSetLanguage() {
                     const stored = localStorage.getItem('preferredLanguage');
@@ -306,6 +390,10 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
 
                     document.documentElement.setAttribute('data-detected-lang', defaultLang);
                     document.documentElement.lang = (defaultLang === 'zh' || defaultLang === 'zh_cn') ? 'zh-CN' : 'en';
+
+                    // Translate UI elements based on detected language
+                    const uiLang = (defaultLang === 'zh_cn' || defaultLang === 'zh') ? 'zh' : 'en';
+                    window.translateUIElements(uiLang);
                 }
                 detectAndSetLanguage();
 

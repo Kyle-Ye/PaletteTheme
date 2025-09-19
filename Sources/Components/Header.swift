@@ -186,6 +186,11 @@ struct RootLanguagePicker: Component {
             if (typeof window.updateHomepageContent === 'function') {
                 window.updateHomepageContent(lang);
             }
+
+            // Finally, translate UI elements if the function is available
+            if (typeof window.translateUIElements === 'function') {
+                window.translateUIElements(lang);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
