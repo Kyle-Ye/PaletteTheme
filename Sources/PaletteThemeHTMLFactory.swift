@@ -12,7 +12,35 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
     func makeIndexHTML(for index: Index, context: PublishingContext<Site>) throws -> HTML {
         HTML(
             .lang(context.site.language),
-            .head(for: index, on: context.site, customNodes: context.site.headCustomNodes),
+            .head(for: index, on: context.site, customNodes: context.site.headCustomNodes + [
+                .script(.text("""
+                // Language detection for initial page load
+                function detectAndSetInitialLanguage() {
+                    const stored = localStorage.getItem('preferredLanguage');
+                    const browserLang = navigator.language || navigator.userLanguage;
+
+                    let defaultLang = 'en'; // Default to English
+                    if (stored) {
+                        defaultLang = stored;
+                    } else if (browserLang.toLowerCase().includes('zh') ||
+                               browserLang.toLowerCase().includes('chinese')) {
+                        defaultLang = 'zh_cn';
+                    }
+
+                    // Set the detected language as a data attribute for the server to potentially use
+                    document.documentElement.setAttribute('data-detected-lang', defaultLang);
+
+                    // Update page language attribute based on detection
+                    document.documentElement.lang = (defaultLang === 'zh' || defaultLang === 'zh_cn') ? 'zh-CN' : 'en';
+
+                    // Store detected language for future use
+                    if (!localStorage.getItem('preferredLanguage')) {
+                        localStorage.setItem('preferredLanguage', defaultLang);
+                    }
+                }
+                detectAndSetInitialLanguage();
+                """))
+            ]),
             .body {
                 PageContainer {
                     RibbonView()
@@ -35,7 +63,7 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
                                     .class("mt-4")
                             }
                             .class("mb-16")
-                            
+
                             // Latest Writing
                             H2("Latest Writing").class("top-h2")
                             ItemList(
@@ -64,10 +92,30 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
         ) else {
             return HTML()
         }
-        
+
         return HTML(
             .lang(context.site.language),
-            .head(for: section, on: context.site, customNodes: context.site.headCustomNodes),
+            .head(for: section, on: context.site, customNodes: context.site.headCustomNodes + [
+                .script(.text("""
+                // Language detection for section pages
+                function detectAndSetLanguage() {
+                    const stored = localStorage.getItem('preferredLanguage');
+                    const browserLang = navigator.language || navigator.userLanguage;
+
+                    let defaultLang = 'en';
+                    if (stored) {
+                        defaultLang = stored;
+                    } else if (browserLang.toLowerCase().includes('zh') ||
+                               browserLang.toLowerCase().includes('chinese')) {
+                        defaultLang = 'zh_cn';
+                    }
+
+                    document.documentElement.setAttribute('data-detected-lang', defaultLang);
+                    document.documentElement.lang = (defaultLang === 'zh' || defaultLang === 'zh_cn') ? 'zh-CN' : 'en';
+                }
+                detectAndSetLanguage();
+                """))
+            ]),
             .body {
                 PageContainer {
                     RibbonView()

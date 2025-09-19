@@ -16,7 +16,7 @@ struct ItemList<Site: PaletteWebsite>: Component {
     var body: Component {
         List(items) { item in
             Article {
-                H3(Link(item.title, url: item.path.absoluteString))
+                H3(Link(item.title, url: extractBasePath(from: item.path).absoluteString))
                     .class("font-semibold")
                 Paragraph(item.description)
                     .class("mt-2")
@@ -27,6 +27,49 @@ struct ItemList<Site: PaletteWebsite>: Component {
             .class("rounded-lg my-6 p-6")
             .class("bg-zinc-100 dark:bg-zinc-800")
         }
+    }
+
+    // Helper function to extract base path from item path
+    private func extractBasePath(from path: Path) -> Path {
+        let pathString = path.string
+
+        // Check if path ends with language suffix (e.g., "_en")
+        if let underscoreIndex = pathString.lastIndex(of: "_"),
+           let suffixStart = pathString.index(underscoreIndex, offsetBy: 1, limitedBy: pathString.endIndex) {
+            let suffix = String(pathString[suffixStart...])
+
+            // Check if suffix is a valid language code
+            if isValidLanguageCode(suffix) {
+                let basePath = String(pathString[..<underscoreIndex])
+                return Path(basePath)
+            }
+        }
+
+        // Return original path if no language suffix found
+        return path
+    }
+
+    // Helper function to check if a string is a valid language code
+    private func isValidLanguageCode(_ code: String) -> Bool {
+        let supportedLanguages = ["en", "zh", "ja", "ko", "fr", "de", "es", "it", "pt", "ru"]
+        return supportedLanguages.contains(code)
+    }
+}
+
+extension Component {
+    func appendingScript(_ script: String) -> Component {
+        return ComponentGroup {
+            self
+            Script(script: script)
+        }
+    }
+}
+
+struct Script: Component {
+    let script: String
+
+    var body: Component {
+        Node<HTML.BodyContext>.script(.text(script))
     }
 }
 
