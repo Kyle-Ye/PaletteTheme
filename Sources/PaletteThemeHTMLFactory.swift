@@ -51,7 +51,7 @@ func generateHomepageLanguageData<Site: PaletteWebsite>(context: PublishingConte
             languageData[basePath]![languageCode] = [
                 "title": item.title,
                 "description": item.description,
-                "url": item.path.absoluteString,
+                "url": extractBasePath(from: item.path).absoluteString,
                 "date": formatDate(item.date)
             ]
         }
@@ -61,28 +61,28 @@ func generateHomepageLanguageData<Site: PaletteWebsite>(context: PublishingConte
             languageData[basePath]!["zh"] = [
                 "title": "使用 AttributeGraph 调试 SwiftUI：从 DisplayList 到 Transactions",
                 "description": "使用 AttributeGraph API 深入分析 SwiftUI 调试技术",
-                "url": "/posts/swiftui-debug-analysis_zh",
+                "url": "/posts/swiftui-debug-analysis",
                 "date": formatDate(items.first?.date ?? Date())
             ]
         } else if basePath == "posts/swiftui-textfield-memory-leak" {
             languageData[basePath]!["zh"] = [
                 "title": "SwiftUI TextField 在 iOS 17+ 上的内存泄漏分析",
                 "description": "深入调查 iOS 17+ 版本中 SwiftUI TextField 由 AFUITargetDetectionController 引起的关键内存泄漏问题，并提供解决方案",
-                "url": "/posts/swiftui-textfield-memory-leak_zh",
+                "url": "/posts/swiftui-textfield-memory-leak",
                 "date": formatDate(items.first?.date ?? Date())
             ]
         } else if basePath == "posts/swiftui-timeline-view" {
             languageData[basePath]!["zh"] = [
                 "title": "深入理解 SwiftUI 的 TimelineView",
                 "description": "基于 OpenSwiftUI 实现探索 TimelineView 和 TimelineSchedule 的内部机制",
-                "url": "/posts/swiftui-timeline-view_zh",
+                "url": "/posts/swiftui-timeline-view",
                 "date": formatDate(items.first?.date ?? Date())
             ]
         } else if basePath == "posts/explore-swiftui-link" {
             languageData[basePath]!["zh"] = [
                 "title": "探索 SwiftUI Link 的实现原理",
                 "description": "深入分析 SwiftUI Link 组件的内部实现机制和使用技巧",
-                "url": "/posts/explore-swiftui-link_zh",
+                "url": "/posts/explore-swiftui-link",
                 "date": formatDate(items.first?.date ?? Date())
             ]
         }
@@ -308,6 +308,9 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
                     document.documentElement.lang = (defaultLang === 'zh' || defaultLang === 'zh_cn') ? 'zh-CN' : 'en';
                 }
                 detectAndSetLanguage();
+
+                // Section page multi-language data for content switching
+                \(generateHomepageLanguageData(context: context))
                 """))
             ]),
             .body {
