@@ -247,15 +247,29 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
 
                 // Language detection for initial page load
                 function detectAndSetInitialLanguage() {
+                    // First check URL query parameters
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const urlLang = urlParams.get('lang');
+
                     const stored = localStorage.getItem('preferredLanguage');
                     const browserLang = navigator.language || navigator.userLanguage;
 
                     let defaultLang = 'en'; // Default to English
-                    if (stored) {
+                    if (urlLang) {
+                        // URL parameter takes highest priority
+                        defaultLang = urlLang === 'zh' ? 'zh_cn' : urlLang;
+                        // Update localStorage with URL parameter value
+                        localStorage.setItem('preferredLanguage', defaultLang);
+                        console.log('URL parameter detected:', urlLang, '-> normalized to:', defaultLang);
+                    } else if (stored) {
                         defaultLang = stored;
+                        console.log('Using stored language:', defaultLang);
                     } else if (browserLang.toLowerCase().includes('zh') ||
                                browserLang.toLowerCase().includes('chinese')) {
                         defaultLang = 'zh_cn';
+                        console.log('Browser language detected as Chinese, using zh_cn');
+                    } else {
+                        console.log('Using default language: en');
                     }
 
                     // Set the detected language as a data attribute for the server to potentially use
@@ -377,15 +391,29 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
 
                 // Language detection for section pages
                 function detectAndSetLanguage() {
+                    // First check URL query parameters
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const urlLang = urlParams.get('lang');
+
                     const stored = localStorage.getItem('preferredLanguage');
                     const browserLang = navigator.language || navigator.userLanguage;
 
                     let defaultLang = 'en';
-                    if (stored) {
+                    if (urlLang) {
+                        // URL parameter takes highest priority
+                        defaultLang = urlLang === 'zh' ? 'zh_cn' : urlLang;
+                        // Update localStorage with URL parameter value
+                        localStorage.setItem('preferredLanguage', defaultLang);
+                        console.log('URL parameter detected:', urlLang, '-> normalized to:', defaultLang);
+                    } else if (stored) {
                         defaultLang = stored;
+                        console.log('Using stored language:', defaultLang);
                     } else if (browserLang.toLowerCase().includes('zh') ||
                                browserLang.toLowerCase().includes('chinese')) {
                         defaultLang = 'zh_cn';
+                        console.log('Browser language detected as Chinese, using zh_cn');
+                    } else {
+                        console.log('Using default language: en');
                     }
 
                     document.documentElement.setAttribute('data-detected-lang', defaultLang);

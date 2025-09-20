@@ -134,14 +134,30 @@ struct RootLanguagePicker: Component {
         }
 
         function getCurrentRootLanguage() {
+            // First check URL query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlLang = urlParams.get('lang');
+            if (urlLang) {
+                // Update localStorage with URL parameter value
+                const storedLang = urlLang === 'zh' ? 'zh_cn' : urlLang;
+                localStorage.setItem('preferredLanguage', storedLang);
+                console.log('Header: URL parameter detected:', urlLang, '-> stored as:', storedLang);
+                return urlLang; // Return original URL lang for UI (en/zh)
+            }
+
             const stored = localStorage.getItem('preferredLanguage');
-            if (stored) return stored === 'zh_cn' ? 'zh' : stored;
+            if (stored) {
+                console.log('Header: Using stored language:', stored);
+                return stored === 'zh_cn' ? 'zh' : stored;
+            }
 
             const browserLang = navigator.language || navigator.userLanguage;
             if (browserLang.toLowerCase().includes('zh') ||
                 browserLang.toLowerCase().includes('chinese')) {
+                console.log('Header: Browser language detected as Chinese, using zh');
                 return 'zh';
             }
+            console.log('Header: Using default language: en');
             return 'en';
         }
 
