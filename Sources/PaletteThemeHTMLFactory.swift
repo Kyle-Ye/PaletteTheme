@@ -12,7 +12,7 @@ import Plot
 func generateHomepageLanguageData<Site: PaletteWebsite>(context: PublishingContext<Site>) -> String {
     // Get ALL items from the context (before filtering) and manually extract language variants
     var allItems: [Item<Site>] = []
-    for sectionID in type(of: context.site).SectionID.allCases {
+    for _ in type(of: context.site).SectionID.allCases {
         // Access the raw items using allItems method which includes filtered items
         let sectionItems = context.allItems(sortedBy: \.date, order: .descending)
         allItems.append(contentsOf: sectionItems)
@@ -204,7 +204,7 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
         HTML(
             .lang(context.site.language),
             .head(for: index, on: context.site, customNodes: context.site.headCustomNodes + [
-                .script(.text("""
+                .script(.raw("""
                 // UI Localization data
                 const uiStrings = {
                     'en': {
@@ -228,7 +228,7 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
                     const translations = uiStrings[lang] || uiStrings['en'];
 
                     // Translate navigation links
-                    document.querySelectorAll('nav a').forEach(link => {
+                    document.querySelectorAll('nav a').forEach(function(link) {
                         const href = link.getAttribute('href');
                         if (href === '/posts' && translations['Posts']) {
                             link.textContent = translations['Posts'];
@@ -238,7 +238,7 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
                     });
 
                     // Translate "About" section
-                    document.querySelectorAll('h2').forEach(heading => {
+                    document.querySelectorAll('h2').forEach(function(heading) {
                         if (heading.textContent.trim() === 'About' && translations['About']) {
                             heading.textContent = translations['About'];
                         }
@@ -334,7 +334,7 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
         return HTML(
             .lang(context.site.language),
             .head(for: section, on: context.site, customNodes: context.site.headCustomNodes + [
-                .script(.text("""
+                .script(.raw("""
                 // UI Localization data (same as homepage)
                 const uiStrings = {
                     'en': {
@@ -358,7 +358,7 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
                     const translations = uiStrings[lang] || uiStrings['en'];
 
                     // Translate navigation links
-                    document.querySelectorAll('nav a').forEach(link => {
+                    document.querySelectorAll('nav a').forEach(function(link) {
                         const href = link.getAttribute('href');
                         if (href === '/posts' && translations['Posts']) {
                             link.textContent = translations['Posts'];
@@ -368,7 +368,7 @@ struct PaletteThemeHTMLFactory<Site: PaletteWebsite>: HTMLFactory {
                     });
 
                     // Translate "About" section
-                    document.querySelectorAll('h2').forEach(heading => {
+                    document.querySelectorAll('h2').forEach(function(heading) {
                         if (heading.textContent.trim() === 'About' && translations['About']) {
                             heading.textContent = translations['About'];
                         }

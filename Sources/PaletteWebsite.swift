@@ -83,7 +83,7 @@ public struct Copyright {
     /// The copyright is valid until the end of the year, generally it's this year.
     let endYear: String?
     
-    var fomattedString: String {
+    public var fomattedString: String {
         let separator = (startYear != nil && endYear != nil) ? "-" : ""
         return "Copyright © \(startYear.orEmpty)\(separator)\(endYear.orEmpty) \(owner)"
     }
